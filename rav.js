@@ -1,21 +1,20 @@
 var Rav = function(component) {
   if (typeof React !== 'undefined') {
-    return transformToReact(component);
+    return this.transformToReact(component);
   } else if (typeof ng !== 'undefined') {
-    return transformToAngular(component);
+    return this.transformToAngular(component);
   } else if (typeof Vue !== 'undefined') {
-    return transformToVue(component);
+    return this.transformToVue(component);
   }
 }
 
-Rav.prototype {
+Rav.prototype = {
   events: [
     'onClick', 'onContextMenu', 'onDoubleClick', 'onDrag', 'onDragEnd',
     'onDragEnter', 'onDragExit', 'onDragLeave', 'onDragOver',
     'onDragStart', 'onDrop', 'onMouseDown', 'onMouseEnter', 'onMouseLeave',
     'onMouseMove', 'onMouseOut', 'onMouseOver', 'onMouseUp'
-  ];
-
+  ],
   setReactProps: function(tpl, ctx) {
     if (!_.isArray(tpl)) {
       var path = tpl
@@ -26,7 +25,7 @@ Rav.prototype {
     var reactTpl = [
       tpl[0],
       _.transform(tpl[1], function(result, value, key) {
-        if(_.includes(events, key)) {
+        if(_.includes(this.events, key)) {
           result[key] = ctx[value];
         } else if (key === 'className') {
           var className = value[0];
@@ -39,23 +38,24 @@ Rav.prototype {
           }
           result[key] = className;
         }
-      })
+      }.bind(this))
     ].concat(tpl.slice(2).map(function(child) {
       return this.setReactProps(child, ctx);
     }.bind(this)));
     return React.createElement.apply(React, reactTpl);
-  }
+  },
 
   transformToReact: function(component) {
+    var self = this;
     var reactClass = {
       getInitialState: component.state,
       render: function() {
-        return this.setReactProps(component.template(), this);
+        return self.setReactProps(component.template(), this);
       }
     }
     reactClass = Object.assign(reactClass, component.methods);
     return React.createClass(reactClass);
-  }
+  },
 
   buildAngularTpl: function(tpl) {
     if (!_.isArray(tpl)) {
@@ -67,7 +67,7 @@ Rav.prototype {
     return `
       <${el}
         ${_.values(_.transform(tpl[1], function(result, value, key) {
-          if(_.includes(events, key)) {
+          if(_.includes(this.events, key)) {
             result[key] = `(${key.toLowerCase().replace('on', '')})="${value}()"`;
           } else if (key === 'className') {
             result[key] = `class="${value[0]}"`
@@ -76,14 +76,14 @@ Rav.prototype {
               result[key] += ` [ngClass]="${ngClass}"`;
             }
           }
-        })).join(' ')}
+        }.bind(this))).join(' ')}
       >
         ${tpl.slice(2).map(function(child) {
           return this.buildAngularTpl(child);
         }.bind(this)).join('')}
       </${el}>
     `;
-  }
+  },
 
   transformToAngular: function(component) {
     return ng.core.Component({
@@ -100,7 +100,7 @@ Rav.prototype {
         }.bind(this))
       }
     }, component.methods));
-  }
+  },
 
   buildVueTpl: function(tpl) {
     if (!_.isArray(tpl)) {
@@ -113,7 +113,7 @@ Rav.prototype {
     return `
       <${el}
         ${_.values(_.transform(tpl[1], function(result, value, key) {
-          if(_.includes(events, key)) {
+          if(_.includes(this.events, key)) {
             result[key] = `v-on:${key.toLowerCase().replace('on', '')}="${value}"`;
           } else if (key === 'className') {
             result[key] = `class="${value[0]}"`
@@ -122,7 +122,7 @@ Rav.prototype {
               result[key] += ` v-bind:class="${vueClass}"`;
             }
           }
-        })).join(' ')}
+        }.bind(this))).join(' ')}
       >
         ${tpl.slice(2).map(function(child) {
           return this.buildVueTpl(child);
