@@ -1,0 +1,46 @@
+#app {
+  font-family: Arial;
+  width: 200px;
+  text-align: center;
+  margin: 150px auto;
+}
+.tooltip {
+  position: relative;
+}
+.tooltip.isVisible .tooltip__content {
+  visibility: visible;
+  opacity: 1;
+}
+.tooltip__content {
+  margin-bottom: 5px;
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  left: 50%;
+  top: -35px;
+  transform: translate3d(-50%, 0, 0);
+  background: #333;
+  padding: 5px 10px;
+  color: #FFF;
+  border-radius: 4px;
+}
+.tooltip__content::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  margin-left: -3px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #333;
+}
+
+ul {
+  padding: 0;
+  margin: 20px;
+}
+li {
+  margin: 5px 20px;
+}

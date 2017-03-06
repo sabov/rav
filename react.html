@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>React demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js" charset="utf-8"></script>
+    <script src="./tooltip.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <ul>
+      <li>
+        <a href="/react.html">react</a>
+      </li>
+      <li>
+        <a href="/angular.html">angular</a>
+      </li>
+      <li>
+        <a href="/vue.html">vue</a>
+      </li>
+    </ul>
+    <div id="app"></div>
+  </body>
+  <script type="text/javascript">
+    ReactDOM.render(React.createElement(
+      'div',
+      null,
+      React.createElement(Tooltip, { text: 'Hey there!' },
+      React.createElement('button', null, 'Hello, React!'))
+    ), document.getElementById('app'));
+  </script>
+</html>
